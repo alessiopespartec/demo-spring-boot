@@ -1,8 +1,11 @@
 package com.example.demo.book;
 
+import com.example.demo.author.Author;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "book")
@@ -16,6 +19,15 @@ public class Book {
 
     @Column(name = "year_of_publication")
     private LocalDate year;
+
+    @ManyToMany
+    @JoinTable(
+        name = "book_author",
+        joinColumns = @JoinColumn(name = "book_id"),
+        inverseJoinColumns = @JoinColumn(name = "author_id")
+    )
+
+    private Set<Author> authors = new HashSet<>();
 
     public Book() {
     }
@@ -53,6 +65,14 @@ public class Book {
 
     public void setYear(LocalDate year) {
         this.year = year;
+    }
+
+    public Set<Author> getAuthors() {
+        return authors;
+    }
+
+    public void setAuthors(Set<Author> authors) {
+        this.authors = authors;
     }
 
     @Override

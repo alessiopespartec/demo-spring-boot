@@ -22,7 +22,6 @@ public class BookService {
 
     public Book getBook(Long id) {
         Optional<Book> bookToFind = bookRepository.findById(id);
-
         return bookToFind.orElse(null);
     }
 
