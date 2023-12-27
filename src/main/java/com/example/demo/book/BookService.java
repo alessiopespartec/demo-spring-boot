@@ -40,6 +40,9 @@ public class BookService {
     }
 
     public void deleteBook(Long id) {
+        Book bookToDelete = bookRepository.findById(id)
+                        .orElseThrow(() -> new EntityNotFoundException("Book not found with ID " + id));
+
         bookRepository.deleteById(id);
     }
 }

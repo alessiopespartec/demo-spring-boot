@@ -40,6 +40,9 @@ public class AuthorService {
     }
 
     public void deleteAuthor(Long id) {
+        Author authorToDelete = authorRepositoty.findById(id)
+                        .orElseThrow(() -> new EntityNotFoundException("Author not found with ID " + id));
+
         authorRepositoty.deleteById(id);
     }
 }

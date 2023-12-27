@@ -58,8 +58,12 @@ public class BookController {
 
     @DeleteMapping("{id}")
     public ResponseEntity<Object> deleteBook(@PathVariable Long id){
-        bookService.deleteBook(id);
-        return ResponseHandler.generateResponse("Book deleted successfully", HttpStatus.OK);
+        try {
+            bookService.deleteBook(id);
+            return ResponseHandler.generateResponse("Book deleted successfully", HttpStatus.OK);
+        } catch (EntityNotFoundException e) {
+            return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.NOT_FOUND);
+        }
     }
 
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)

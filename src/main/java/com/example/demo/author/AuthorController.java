@@ -57,8 +57,12 @@ public class AuthorController {
 
     @DeleteMapping("{id}")
     public ResponseEntity<Object> deleteAuthor(@PathVariable Long id) {
-        authorService.deleteAuthor(id);
-        return ResponseHandler.generateResponse("Author deleted successfully", HttpStatus.OK);
+        try {
+            authorService.deleteAuthor(id);
+            return ResponseHandler.generateResponse("Author deleted successfully", HttpStatus.OK);
+        } catch (EntityNotFoundException e) {
+            return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.NOT_FOUND);
+        }
     }
 
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
