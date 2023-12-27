@@ -28,7 +28,7 @@ public class BookController {
         if (data.isEmpty()) {
             return ResponseHandler.generateResponse("Books not found", HttpStatus.NOT_FOUND, null);
         }
-        return ResponseHandler.generateResponse("Book request successful", HttpStatus.OK, data);
+        return ResponseHandler.generateResponse("Books request successful", HttpStatus.OK, data);
     }
 
     @GetMapping("{id}")
@@ -41,18 +41,21 @@ public class BookController {
     }
 
     @PostMapping
-    public void addBook(@RequestBody Book book) {
+    public ResponseEntity<Object> addBook(@RequestBody Book book) {
         bookService.addBook(book);
+        return ResponseHandler.generateResponse("Book added successfully", HttpStatus.OK);
     }
 
     @PutMapping("{id}")
-    public void updateBook(@RequestBody Book book, @PathVariable Long id) {
+    public ResponseEntity<Object> updateBook(@RequestBody Book book, @PathVariable Long id) {
         bookService.updateBook(book, id);
+        return ResponseHandler.generateResponse("Book updated successfully", HttpStatus.OK);
     }
 
     @DeleteMapping("{id}")
-    public void deleteBook(@PathVariable Long id){
+    public ResponseEntity<Object> deleteBook(@PathVariable Long id){
         bookService.deleteBook(id);
+        return ResponseHandler.generateResponse("Book deleted successfully", HttpStatus.OK);
     }
 
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)

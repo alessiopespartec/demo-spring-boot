@@ -21,8 +21,7 @@ public class BookService {
     }
 
     public Book getBook(Long id) {
-        Optional<Book> bookToFind = bookRepository.findById(id);
-        return bookToFind.orElse(null);
+        return bookRepository.findById(id).orElse(null);
     }
 
     public void addBook(Book book) {
@@ -39,8 +38,6 @@ public class BookService {
     }
 
     public void deleteBook(Long id) {
-        Book bookToDelete = bookRepository.getReferenceById(id);
-
-        bookRepository.delete(bookToDelete);
+        bookRepository.deleteById(id);
     }
 }
