@@ -7,7 +7,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-@Table(name = "author")
 public class Author {
     @Id
     @SequenceGenerator(name = "author_sequence", sequenceName = "author_sequence", allocationSize = 1)

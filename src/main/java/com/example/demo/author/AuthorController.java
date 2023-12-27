@@ -1,6 +1,7 @@
 package com.example.demo.author;
 
 import com.example.demo.ResponseHandler;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.websocket.server.PathParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -24,7 +25,7 @@ public class AuthorController {
     public ResponseEntity<Object> getAllAuthors() {
         List<Author> data = authorService.getAllAuthors();
         if (data.isEmpty()) {
-            return ResponseHandler.generateResponse("Authors not found", HttpStatus.NOT_FOUND, null);
+            return ResponseHandler.generateResponse("Authors not found", HttpStatus.NOT_FOUND);
         }
         return ResponseHandler.generateResponse("Authors request successful", HttpStatus.OK, data);
     }
@@ -33,7 +34,7 @@ public class AuthorController {
     public ResponseEntity<Object> getAuthor(@PathVariable Long id){
         Author authorToFind = authorService.getAuthor(id);
         if (authorToFind == null) {
-            return ResponseHandler.generateResponse("Author not found", HttpStatus.NOT_FOUND, null);
+            return ResponseHandler.generateResponse("Author not found", HttpStatus.NOT_FOUND);
         }
         return ResponseHandler.generateResponse("Author request successful", HttpStatus.OK, authorToFind);
     }
@@ -46,8 +47,12 @@ public class AuthorController {
 
     @PutMapping("{id}")
     public ResponseEntity<Object> updateAuthor(@RequestBody Author author, @PathVariable Long id) {
-        authorService.updateAuthor(author, id);
-        return ResponseHandler.generateResponse("Author updated successfully", HttpStatus.OK);
+        try {
+            authorService.updateAuthor(author, id);
+            return ResponseHandler.generateResponse("Author updated successfully", HttpStatus.OK);
+        } catch (EntityNotFoundException e) {
+            return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.NOT_FOUND);
+        }
     }
 
     @DeleteMapping("{id}")

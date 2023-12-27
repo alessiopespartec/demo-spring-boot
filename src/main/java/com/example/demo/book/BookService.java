@@ -1,5 +1,6 @@
 package com.example.demo.book;
 
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -29,7 +30,8 @@ public class BookService {
     }
 
     public void updateBook(Book book, Long id) {
-        Book bookToUpdate = bookRepository.getReferenceById(id);
+        Book bookToUpdate = bookRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Book not found with ID " + id));
 
         bookToUpdate.setTitle(book.getTitle());
         bookToUpdate.setYear(book.getYear());

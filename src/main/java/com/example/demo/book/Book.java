@@ -1,6 +1,7 @@
 package com.example.demo.book;
 
 import com.example.demo.author.Author;
+import com.example.demo.publisher.Publisher;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
@@ -26,8 +27,11 @@ public class Book {
         joinColumns = @JoinColumn(name = "book_id"),
         inverseJoinColumns = @JoinColumn(name = "author_id")
     )
-
     private Set<Author> authors = new HashSet<>();
+
+    @ManyToOne
+    @JoinColumn(name = "publisher_id")
+    private Publisher publisher;
 
     public Book() {
     }

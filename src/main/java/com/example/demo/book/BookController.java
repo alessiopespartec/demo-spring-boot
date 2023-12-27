@@ -26,7 +26,7 @@ public class BookController {
     public ResponseEntity<Object> getAllBooks() {
         List<Book> data = bookService.getAllBooks();
         if (data.isEmpty()) {
-            return ResponseHandler.generateResponse("Books not found", HttpStatus.NOT_FOUND, null);
+            return ResponseHandler.generateResponse("Books not found", HttpStatus.NOT_FOUND);
         }
         return ResponseHandler.generateResponse("Books request successful", HttpStatus.OK, data);
     }
@@ -35,7 +35,7 @@ public class BookController {
     public ResponseEntity<Object> getBook(@PathVariable Long id) {
         Book book = bookService.getBook(id);
         if (book == null) {
-            return ResponseHandler.generateResponse("Book not found", HttpStatus.NOT_FOUND, null);
+            return ResponseHandler.generateResponse("Book not found", HttpStatus.NOT_FOUND);
         }
         return ResponseHandler.generateResponse("Book request successful", HttpStatus.OK, book);
     }
@@ -48,8 +48,12 @@ public class BookController {
 
     @PutMapping("{id}")
     public ResponseEntity<Object> updateBook(@RequestBody Book book, @PathVariable Long id) {
-        bookService.updateBook(book, id);
-        return ResponseHandler.generateResponse("Book updated successfully", HttpStatus.OK);
+        try {
+            bookService.updateBook(book, id);
+            return ResponseHandler.generateResponse("Book updated successfully", HttpStatus.OK);
+        } catch (EntityNotFoundException e) {
+            return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.NOT_FOUND);
+        }
     }
 
     @DeleteMapping("{id}")

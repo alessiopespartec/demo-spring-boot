@@ -1,5 +1,6 @@
 package com.example.demo.author;
 
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -29,7 +30,8 @@ public class AuthorService {
     }
 
     public void updateAuthor(Author author, Long id) {
-        Author authorToUpdate = authorRepositoty.getReferenceById(id);
+        Author authorToUpdate = authorRepositoty.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Author not found with ID " + id));
 
         authorToUpdate.setFirstName(author.getFirstName());
         authorToUpdate.setLastName(author.getLastName());
