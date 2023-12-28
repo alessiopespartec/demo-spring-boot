@@ -20,27 +20,35 @@ public class PublisherService {
     }
 
     public Publisher getPublisher(Long id) {
-        return validateAndGetPublisherById(id);
+        return findPublisherById(id);
     }
 
     public void addPublisher(Publisher publisher) {
+        validatePublisherName(publisher.getName());
         publisherRepository.save(publisher);
     }
 
     public void updatePublisher(Publisher publisher, Long id) {
-        Publisher publisherToUpdate = validateAndGetPublisherById(id);
+        validatePublisherName(publisher.getName());
+        Publisher publisherToUpdate = findPublisherById(id);
 
         publisherToUpdate.setName(publisher.getName());
         publisherRepository.save(publisherToUpdate);
     }
 
     public void deletePublisher(Long id) {
-        Publisher publisherToDelete = validateAndGetPublisherById(id);
+        Publisher publisherToDelete = findPublisherById(id);
         publisherRepository.deleteById(id);
     }
 
-    private Publisher validateAndGetPublisherById(Long id) {
+    private Publisher findPublisherById(Long id) {
         return publisherRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Publisher not found with ID " + id));
+    }
+
+    private void validatePublisherName(String name) {
+        if (name.trim().isEmpty() || name.trim() == null) {
+            throw new IllegalArgumentException("Publisher name cannot be null or empty");
+        }
     }
 }

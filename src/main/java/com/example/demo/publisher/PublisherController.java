@@ -42,8 +42,12 @@ public class PublisherController {
 
     @PostMapping
     public ResponseEntity<Object> addPublisher(@RequestBody Publisher publisher) {
-        publisherService.addPublisher(publisher);
-        return ResponseHandler.generateResponse("Publisher added successfully", HttpStatus.CREATED);
+        try {
+            publisherService.addPublisher(publisher);
+            return ResponseHandler.generateResponse("Publisher added successfully", HttpStatus.CREATED);
+        } catch (IllegalArgumentException e) {
+            return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
     }
 
     @PutMapping("{id}")
