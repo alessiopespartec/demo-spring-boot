@@ -28,7 +28,7 @@ public class BookController {
         if (data.isEmpty()) {
             return ResponseHandler.generateResponse("Books not found", HttpStatus.NOT_FOUND);
         }
-        return ResponseHandler.generateResponse("Books request successful", HttpStatus.FOUND, data);
+        return ResponseHandler.generateResponse("Books request successful", HttpStatus.OK, data);
     }
 
     @GetMapping("{id}")

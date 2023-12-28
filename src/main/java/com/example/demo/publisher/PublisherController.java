@@ -27,14 +27,14 @@ public class PublisherController {
         if (data.isEmpty()) {
             return ResponseHandler.generateResponse("Publishers not found", HttpStatus.NOT_FOUND);
         }
-        return ResponseHandler.generateResponse("Publishers request successful", HttpStatus.FOUND, data);
+        return ResponseHandler.generateResponse("Publishers request successful", HttpStatus.OK, data);
     }
 
     @GetMapping("{id}")
     public ResponseEntity<Object> getPublisher(@PathVariable Long id) {
         try {
             Publisher publisher = publisherService.getPublisher(id);
-            return ResponseHandler.generateResponse("Publisher request successful", HttpStatus.FOUND, publisher);
+            return ResponseHandler.generateResponse("Publisher request successful", HttpStatus.OK, publisher);
         } catch (EntityNotFoundException e) {
             return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.NOT_FOUND);
         }

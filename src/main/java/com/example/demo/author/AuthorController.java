@@ -27,14 +27,14 @@ public class AuthorController {
         if (data.isEmpty()) {
             return ResponseHandler.generateResponse("Authors not found", HttpStatus.NOT_FOUND);
         }
-        return ResponseHandler.generateResponse("Authors request successful", HttpStatus.FOUND, data);
+        return ResponseHandler.generateResponse("Authors request successful", HttpStatus.OK, data);
     }
 
     @GetMapping("{id}")
     public ResponseEntity<Object> getAuthor(@PathVariable Long id){
         try {
             Author authorToFind = authorService.getAuthor(id);
-            return ResponseHandler.generateResponse("Author request successful", HttpStatus.FOUND, authorToFind);
+            return ResponseHandler.generateResponse("Author request successful", HttpStatus.OK, authorToFind);
         } catch (EntityNotFoundException e) {
             return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.NOT_FOUND);
         }
