@@ -27,22 +27,23 @@ public class AuthorController {
         if (data.isEmpty()) {
             return ResponseHandler.generateResponse("Authors not found", HttpStatus.NOT_FOUND);
         }
-        return ResponseHandler.generateResponse("Authors request successful", HttpStatus.OK, data);
+        return ResponseHandler.generateResponse("Authors request successful", HttpStatus.FOUND, data);
     }
 
     @GetMapping("{id}")
     public ResponseEntity<Object> getAuthor(@PathVariable Long id){
-        Author authorToFind = authorService.getAuthor(id);
-        if (authorToFind == null) {
-            return ResponseHandler.generateResponse("Author not found", HttpStatus.NOT_FOUND);
+        try {
+            Author authorToFind = authorService.getAuthor(id);
+            return ResponseHandler.generateResponse("Author request successful", HttpStatus.FOUND, authorToFind);
+        } catch (EntityNotFoundException e) {
+            return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.NOT_FOUND);
         }
-        return ResponseHandler.generateResponse("Author request successful", HttpStatus.OK, authorToFind);
     }
 
     @PostMapping
     public ResponseEntity<Object> addAuthor(@RequestBody Author author) {
         authorService.addAuthor(author);
-        return ResponseHandler.generateResponse("Author added successfully", HttpStatus.OK);
+        return ResponseHandler.generateResponse("Author added successfully", HttpStatus.CREATED);
     }
 
     @PutMapping("{id}")
@@ -73,6 +74,6 @@ public class AuthorController {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Object> handleGenericException(Exception e) {
-        return ResponseHandler.generateResponse("Internal server error", HttpStatus.INTERNAL_SERVER_ERROR, null);
+        return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR, null);
     }
 }

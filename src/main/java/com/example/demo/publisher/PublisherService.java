@@ -20,7 +20,7 @@ public class PublisherService {
     }
 
     public Publisher getPublisher(Long id) {
-        return publisherRepository.findById(id).orElse(null);
+        return validateAndGetPublisherById(id);
     }
 
     public void addPublisher(Publisher publisher) {
@@ -28,17 +28,19 @@ public class PublisherService {
     }
 
     public void updatePublisher(Publisher publisher, Long id) {
-        Publisher publisherToUpdate = publisherRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Publisher not found with ID " + id));
+        Publisher publisherToUpdate = validateAndGetPublisherById(id);
 
         publisherToUpdate.setName(publisher.getName());
         publisherRepository.save(publisherToUpdate);
     }
 
     public void deletePublisher(Long id) {
-        Publisher publisherToDelete = publisherRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Publisher not found with ID " + id));
-
+        Publisher publisherToDelete = validateAndGetPublisherById(id);
         publisherRepository.deleteById(id);
+    }
+
+    private Publisher validateAndGetPublisherById(Long id) {
+        return publisherRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Publisher not found with ID " + id));
     }
 }

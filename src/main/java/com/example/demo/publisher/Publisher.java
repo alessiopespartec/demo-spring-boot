@@ -1,6 +1,7 @@
 package com.example.demo.publisher;
 
 import com.example.demo.book.Book;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.util.HashSet;
@@ -15,6 +16,7 @@ public class Publisher {
     private String name;
 
     @OneToMany(mappedBy = "publisher")
+    @JsonIgnore
     private Set<Book> books = new HashSet<>();
 
     public Publisher() {

@@ -28,22 +28,23 @@ public class BookController {
         if (data.isEmpty()) {
             return ResponseHandler.generateResponse("Books not found", HttpStatus.NOT_FOUND);
         }
-        return ResponseHandler.generateResponse("Books request successful", HttpStatus.OK, data);
+        return ResponseHandler.generateResponse("Books request successful", HttpStatus.FOUND, data);
     }
 
     @GetMapping("{id}")
     public ResponseEntity<Object> getBook(@PathVariable Long id) {
-        Book book = bookService.getBook(id);
-        if (book == null) {
-            return ResponseHandler.generateResponse("Book not found", HttpStatus.NOT_FOUND);
+        try {
+            Book book = bookService.getBook(id);
+            return ResponseHandler.generateResponse("Book request successful", HttpStatus.FOUND, book);
+        } catch (EntityNotFoundException e) {
+            return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.NOT_FOUND);
         }
-        return ResponseHandler.generateResponse("Book request successful", HttpStatus.OK, book);
     }
 
     @PostMapping
     public ResponseEntity<Object> addBook(@RequestBody Book book) {
         bookService.addBook(book);
-        return ResponseHandler.generateResponse("Book added successfully", HttpStatus.OK);
+        return ResponseHandler.generateResponse("Book added successfully", HttpStatus.CREATED);
     }
 
     @PutMapping("{id}")
@@ -74,6 +75,6 @@ public class BookController {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Object> handleGenericException(Exception e) {
-        return ResponseHandler.generateResponse("Internal server error", HttpStatus.INTERNAL_SERVER_ERROR, null);
+        return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR, null);
     }
 }

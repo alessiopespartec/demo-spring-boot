@@ -1,6 +1,7 @@
 package com.example.demo.author;
 
 import com.example.demo.book.Book;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.util.HashSet;
@@ -16,6 +17,7 @@ public class Author {
     private String lastName;
 
     @ManyToMany(mappedBy = "authors")
+    @JsonIgnore
     private Set<Book> books = new HashSet<>();
 
     public Author() {

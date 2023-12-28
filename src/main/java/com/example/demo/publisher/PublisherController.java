@@ -27,22 +27,23 @@ public class PublisherController {
         if (data.isEmpty()) {
             return ResponseHandler.generateResponse("Publishers not found", HttpStatus.NOT_FOUND);
         }
-        return ResponseHandler.generateResponse("Publishers request successful", HttpStatus.OK, data);
+        return ResponseHandler.generateResponse("Publishers request successful", HttpStatus.FOUND, data);
     }
 
     @GetMapping("{id}")
     public ResponseEntity<Object> getPublisher(@PathVariable Long id) {
-        Publisher publisher = publisherService.getPublisher(id);
-        if (publisher == null) {
-            return ResponseHandler.generateResponse("Publisher not found", HttpStatus.NOT_FOUND);
+        try {
+            Publisher publisher = publisherService.getPublisher(id);
+            return ResponseHandler.generateResponse("Publisher request successful", HttpStatus.FOUND, publisher);
+        } catch (EntityNotFoundException e) {
+            return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.NOT_FOUND);
         }
-        return ResponseHandler.generateResponse("Publisher request successful", HttpStatus.OK, publisher);
     }
 
     @PostMapping
     public ResponseEntity<Object> addPublisher(@RequestBody Publisher publisher) {
         publisherService.addPublisher(publisher);
-        return ResponseHandler.generateResponse("Publisher added successfully", HttpStatus.OK);
+        return ResponseHandler.generateResponse("Publisher added successfully", HttpStatus.CREATED);
     }
 
     @PutMapping("{id}")
@@ -73,6 +74,6 @@ public class PublisherController {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Object> handleGenericException(Exception e) {
-        return ResponseHandler.generateResponse("Internal server error", HttpStatus.INTERNAL_SERVER_ERROR, null);
+        return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR, null);
     }
 }
