@@ -1,8 +1,8 @@
 package com.example.demo.author;
 
-import com.example.demo.ResponseHandler;
+import com.example.demo.exceptions.MessageFactory;
+import com.example.demo.response.ResponseHandler;
 import jakarta.persistence.EntityNotFoundException;
-import jakarta.websocket.server.PathParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,57 +23,39 @@ public class AuthorController {
 
     @GetMapping
     public ResponseEntity<Object> getAllAuthors() {
-        List<Author> data = authorService.getAllAuthors();
-        if (data.isEmpty()) {
-            return ResponseHandler.generateResponse("Authors not found", HttpStatus.NOT_FOUND);
+        List<Author> authors = authorService.getAllAuthors();
+        if (authors.isEmpty()) {
+            throw new EntityNotFoundException("No Authors found");
         }
-        return ResponseHandler.generateResponse("Authors request successful", HttpStatus.OK, data);
+        String successMessage = MessageFactory.successOperationMessage("Authors", "retrieved");
+        return ResponseHandler.generateResponse(successMessage, HttpStatus.OK, authors);
     }
 
     @GetMapping("{id}")
     public ResponseEntity<Object> getAuthor(@PathVariable Long id){
-        try {
-            Author authorToFind = authorService.getAuthor(id);
-            return ResponseHandler.generateResponse("Author request successful", HttpStatus.OK, authorToFind);
-        } catch (EntityNotFoundException e) {
-            return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.NOT_FOUND);
-        }
+        Author authorToFind = authorService.getAuthor(id);
+        String successMessage = MessageFactory.successOperationMessage("Author", "retrieved");
+        return ResponseHandler.generateResponse(successMessage, HttpStatus.OK, authorToFind);
     }
 
     @PostMapping
     public ResponseEntity<Object> addAuthor(@RequestBody Author author) {
         authorService.addAuthor(author);
-        return ResponseHandler.generateResponse("Author added successfully", HttpStatus.CREATED);
+        String successMessage = MessageFactory.successOperationMessage("Author", "added");
+        return ResponseHandler.generateResponse(successMessage, HttpStatus.CREATED);
     }
 
     @PutMapping("{id}")
     public ResponseEntity<Object> updateAuthor(@RequestBody Author author, @PathVariable Long id) {
-        try {
-            authorService.updateAuthor(author, id);
-            return ResponseHandler.generateResponse("Author updated successfully", HttpStatus.OK);
-        } catch (EntityNotFoundException e) {
-            return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.NOT_FOUND);
-        }
+        authorService.updateAuthor(author, id);
+        String successMessage = MessageFactory.successOperationMessage("Author", "updated");
+        return ResponseHandler.generateResponse(successMessage, HttpStatus.OK);
     }
 
     @DeleteMapping("{id}")
     public ResponseEntity<Object> deleteAuthor(@PathVariable Long id) {
-        try {
-            authorService.deleteAuthor(id);
-            return ResponseHandler.generateResponse("Author deleted successfully", HttpStatus.OK);
-        } catch (EntityNotFoundException e) {
-            return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.NOT_FOUND);
-        }
-    }
-
-    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
-    public ResponseEntity<Object> handleTypeMismatch(MethodArgumentTypeMismatchException e) {
-        String error = "Invalid parameter: " + e.getName() + " should be of type " + e.getRequiredType().getSimpleName();
-        return ResponseHandler.generateResponse(error, HttpStatus.BAD_REQUEST, null);
-    }
-
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<Object> handleGenericException(Exception e) {
-        return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR, null);
+        authorService.deleteAuthor(id);
+        String successMessage = MessageFactory.successOperationMessage("Author", "deleted");
+        return ResponseHandler.generateResponse(successMessage, HttpStatus.OK);
     }
 }

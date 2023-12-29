@@ -24,13 +24,13 @@ public class PublisherService {
     }
 
     public void addPublisher(Publisher publisher) {
-        validatePublisherName(publisher.getName());
+        validatePublisherName(publisher.getName()); // Check if empty name
         publisherRepository.save(publisher);
     }
 
     public void updatePublisher(Publisher publisher, Long id) {
-        validatePublisherName(publisher.getName());
-        Publisher publisherToUpdate = findPublisherById(id);
+        validatePublisherName(publisher.getName()); // Check if empty name
+        Publisher publisherToUpdate = findPublisherById(id); // Check if exists in database
 
         publisherToUpdate.setName(publisher.getName());
         publisherRepository.save(publisherToUpdate);
@@ -42,6 +42,9 @@ public class PublisherService {
     }
 
     private Publisher findPublisherById(Long id) {
+        if (id == null) {
+            throw new IllegalArgumentException("Publisher must have an ID");
+        }
         return publisherRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Publisher not found with ID " + id));
     }

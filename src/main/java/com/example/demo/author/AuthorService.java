@@ -1,15 +1,12 @@
 package com.example.demo.author;
 
-import com.example.demo.book.Book;
-import com.example.demo.publisher.Publisher;
+import com.example.demo.exceptions.EmptyOrNullFieldException;
+import com.example.demo.exceptions.MessageFactory;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 @Service
 public class AuthorService {
@@ -26,15 +23,17 @@ public class AuthorService {
     }
 
     public Author getAuthor(Long id) {
-        return validateAndGetAuthorById(id);
+        return findAuthorById(id);
     }
 
     public void addAuthor(Author author) {
+        validateAuthor(author.getFirstName(), author.getLastName());
         authorRepositoty.save(author);
     }
 
     public void updateAuthor(Author author, Long id) {
-        Author authorToUpdate = validateAndGetAuthorById(id);
+        validateAuthor(author.getFirstName(), author.getLastName());
+        Author authorToUpdate = findAuthorById(id);
 
         authorToUpdate.setFirstName(author.getFirstName());
         authorToUpdate.setLastName(author.getLastName());
@@ -43,16 +42,20 @@ public class AuthorService {
     }
 
     public void deleteAuthor(Long id) {
-        Author authorToDelete = validateAndGetAuthorById(id);
-        authorRepositoty.deleteById(id);
+        authorRepositoty.delete(findAuthorById(id));
     }
 
-    private Author validateAndGetAuthorById(Long id) {
-        if (id == null) {
-            throw new IllegalArgumentException("Author must have an ID");
-        }
-
+    private Author findAuthorById(Long id) {
         return authorRepositoty.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Author not found with ID " + id));
+                .orElseThrow(() -> new EntityNotFoundException(MessageFactory.entityNotFoundMessage("Author", id)));
+    }
+
+    private void validateAuthor(String firstName, String lastName) {
+        if (firstName == null || firstName.trim().isEmpty()) {
+            throw new EmptyOrNullFieldException(MessageFactory.emptyOrNullFieldMessage("Author", "first name"));
+        }
+        if (lastName == null || lastName.trim().isEmpty()) {
+            throw new EmptyOrNullFieldException(MessageFactory.emptyOrNullFieldMessage("Author", "last name"));
+        }
     }
 }
