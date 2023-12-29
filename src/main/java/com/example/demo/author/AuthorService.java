@@ -11,15 +11,15 @@ import java.util.List;
 @Service
 public class AuthorService {
 
-    private final AuthorRepositoty authorRepositoty;
+    private final AuthorRepository authorRepository;
 
     @Autowired
-    public AuthorService(AuthorRepositoty authorRepositoty) {
-        this.authorRepositoty = authorRepositoty;
+    public AuthorService(AuthorRepository authorRepository) {
+        this.authorRepository = authorRepository;
     }
 
     public List<Author> getAllAuthors() {
-        return authorRepositoty.findAll();
+        return authorRepository.findAll();
     }
 
     public Author getAuthor(Long id) {
@@ -27,35 +27,24 @@ public class AuthorService {
     }
 
     public void addAuthor(Author author) {
-        validateAuthor(author.getFirstName(), author.getLastName());
-        authorRepositoty.save(author);
+        authorRepository.save(author);
     }
 
     public void updateAuthor(Author author, Long id) {
-        validateAuthor(author.getFirstName(), author.getLastName());
         Author authorToUpdate = findAuthorById(id);
 
         authorToUpdate.setFirstName(author.getFirstName());
         authorToUpdate.setLastName(author.getLastName());
 
-        authorRepositoty.save(authorToUpdate);
+        authorRepository.save(authorToUpdate);
     }
 
     public void deleteAuthor(Long id) {
-        authorRepositoty.delete(findAuthorById(id));
+        authorRepository.delete(findAuthorById(id));
     }
 
     private Author findAuthorById(Long id) {
-        return authorRepositoty.findById(id)
+        return authorRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException(MessageFactory.entityNotFoundMessage("Author", id)));
-    }
-
-    private void validateAuthor(String firstName, String lastName) {
-        if (firstName == null || firstName.trim().isEmpty()) {
-            throw new EmptyOrNullFieldException(MessageFactory.emptyOrNullFieldMessage("Author", "first name"));
-        }
-        if (lastName == null || lastName.trim().isEmpty()) {
-            throw new EmptyOrNullFieldException(MessageFactory.emptyOrNullFieldMessage("Author", "last name"));
-        }
     }
 }

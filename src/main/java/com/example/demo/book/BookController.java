@@ -1,7 +1,9 @@
 package com.example.demo.book;
 
+import com.example.demo.exceptions.MessageFactory;
 import com.example.demo.response.ResponseHandler;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,57 +25,39 @@ public class BookController {
 
     @GetMapping
     public ResponseEntity<Object> getAllBooks() {
-        List<Book> data = bookService.getAllBooks();
-        if (data.isEmpty()) {
-            return ResponseHandler.generateResponse("Books not found", HttpStatus.NOT_FOUND);
+        List<Book> books = bookService.getAllBooks();
+        if (books.isEmpty()) {
+            throw new EntityNotFoundException("No books found");
         }
-        return ResponseHandler.generateResponse("Books request successful", HttpStatus.OK, data);
+        String successMessage = MessageFactory.successOperationMessage("Books", "retrieved");
+        return ResponseHandler.generateResponse(successMessage, HttpStatus.OK, books);
     }
 
     @GetMapping("{id}")
     public ResponseEntity<Object> getBook(@PathVariable Long id) {
-        try {
-            Book book = bookService.getBook(id);
-            return ResponseHandler.generateResponse("Book request successful", HttpStatus.FOUND, book);
-        } catch (EntityNotFoundException e) {
-            return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.NOT_FOUND);
-        }
+        Book book = bookService.getBook(id);
+        String successMessage = MessageFactory.successOperationMessage("Book", "retrieved");
+        return ResponseHandler.generateResponse(successMessage, HttpStatus.FOUND, book);
     }
 
     @PostMapping
-    public ResponseEntity<Object> addBook(@RequestBody Book book) {
+    public ResponseEntity<Object> addBook(@Valid @RequestBody Book book) {
         bookService.addBook(book);
-        return ResponseHandler.generateResponse("Book added successfully", HttpStatus.CREATED);
+        String successMessage = MessageFactory.successOperationMessage("Book", "added");
+        return ResponseHandler.generateResponse(successMessage, HttpStatus.CREATED);
     }
 
     @PutMapping("{id}")
-    public ResponseEntity<Object> updateBook(@RequestBody Book book, @PathVariable Long id) {
-        try {
-            bookService.updateBook(book, id);
-            return ResponseHandler.generateResponse("Book updated successfully", HttpStatus.OK);
-        } catch (EntityNotFoundException e) {
-            return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.NOT_FOUND);
-        }
+    public ResponseEntity<Object> updateBook(@Valid @RequestBody Book book, @PathVariable Long id) {
+        bookService.updateBook(book, id);
+        String successMessage = MessageFactory.successOperationMessage("Book", "updated");
+        return ResponseHandler.generateResponse(successMessage, HttpStatus.OK);
     }
 
     @DeleteMapping("{id}")
     public ResponseEntity<Object> deleteBook(@PathVariable Long id){
-        try {
-            bookService.deleteBook(id);
-            return ResponseHandler.generateResponse("Book deleted successfully", HttpStatus.OK);
-        } catch (EntityNotFoundException e) {
-            return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.NOT_FOUND);
-        }
-    }
-
-    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
-    public ResponseEntity<Object> handleTypeMismatch(MethodArgumentTypeMismatchException e) {
-        String error = "Invalid parameter: " + e.getName() + " should be of type " + e.getRequiredType().getSimpleName();
-        return ResponseHandler.generateResponse(error, HttpStatus.BAD_REQUEST, null);
-    }
-
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<Object> handleGenericException(Exception e) {
-        return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR, null);
+        bookService.deleteBook(id);
+        String successMessage = MessageFactory.successOperationMessage("Book", "deleted");
+        return ResponseHandler.generateResponse(successMessage, HttpStatus.OK);
     }
 }

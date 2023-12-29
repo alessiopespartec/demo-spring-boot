@@ -1,7 +1,8 @@
 package com.example.demo.book;
 
 import com.example.demo.author.Author;
-import com.example.demo.author.AuthorRepositoty;
+import com.example.demo.author.AuthorRepository;
+import com.example.demo.exceptions.MessageFactory;
 import com.example.demo.publisher.Publisher;
 import com.example.demo.publisher.PublisherRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -19,10 +20,10 @@ public class BookService {
     private final BookRepository bookRepository;
     private final PublisherRepository publisherRepository;
 
-    private final AuthorRepositoty authorRepository;
+    private final AuthorRepository authorRepository;
 
     @Autowired
-    public BookService(BookRepository bookRepository, PublisherRepository publisherRepository, AuthorRepositoty authorRepository) {
+    public BookService(BookRepository bookRepository, PublisherRepository publisherRepository, AuthorRepository authorRepository) {
         this.bookRepository = bookRepository;
         this.publisherRepository = publisherRepository;
         this.authorRepository = authorRepository;
@@ -33,7 +34,7 @@ public class BookService {
     }
 
     public Book getBook(Long bookId) {
-        return validateAndGetBookById(bookId);
+        return findBookById(bookId);
     }
 
     @Transactional
@@ -52,7 +53,7 @@ public class BookService {
         Publisher publisher = validateAndGetPublisher(book.getPublisher());
         Set<Author> authors = validateAndGetAuthors(book.getAuthors());
 
-        Book bookToUpdate = validateAndGetBookById(bookId);
+        Book bookToUpdate = findBookById(bookId);
 
         bookToUpdate.setTitle(book.getTitle());
         bookToUpdate.setYear(book.getYear());
@@ -62,33 +63,36 @@ public class BookService {
         bookRepository.save(bookToUpdate);
     }
 
-    public void deleteBook(Long bookId) {
-        Book bookToDelete = validateAndGetBookById(bookId);
-        bookRepository.deleteById(bookId);
+    public void deleteBook(Long id) {
+        bookRepository.delete(findBookById(id));
     }
 
-    private Book validateAndGetBookById(Long bookId) {
-        return bookRepository.findById(bookId)
-                .orElseThrow(() -> new EntityNotFoundException("Book not found with ID " + bookId));
+    private Book findBookById(Long id) {
+        return bookRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException(MessageFactory.entityNotFoundMessage("Book", id)));
     }
 
     private Publisher validateAndGetPublisher(Publisher publisher) {
-        if (publisher == null || publisher.getId() == null) {
+        if (publisher == null || publisher.getId() == null) { // @NotBlank is not written in Book.java
             throw new IllegalArgumentException("Publisher must have an ID");
         }
 
         return publisherRepository.findById(publisher.getId())
-                .orElseThrow(() -> new EntityNotFoundException("Publisher not found with ID " + publisher.getId()));
+                .orElseThrow(() -> new EntityNotFoundException(MessageFactory.entityNotFoundMessage("Publisher", publisher.getId())));
     }
 
     private Set<Author> validateAndGetAuthors(Set<Author> authors) {
+        if (authors == null || authors.isEmpty()) { // @NotBlank is not written in Book.java
+            throw new IllegalArgumentException("At least one author is required");
+        }
+
         Set<Author> validatedAuthors = new HashSet<>();
         for (Author author : authors) {
             if (author.getId() == null) {
                 throw new IllegalArgumentException("Each author must have an ID");
             }
             Author dbAuthor = authorRepository.findById(author.getId())
-                    .orElseThrow(() -> new EntityNotFoundException("Author not found with ID " + author.getId()));
+                    .orElseThrow(() -> new EntityNotFoundException(MessageFactory.entityNotFoundMessage("Author", author.getId())));
             validatedAuthors.add(dbAuthor);
         }
         return validatedAuthors;

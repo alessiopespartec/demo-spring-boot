@@ -3,6 +3,7 @@ package com.example.demo.publisher;
 import com.example.demo.book.Book;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -13,6 +14,7 @@ public class Publisher {
     @SequenceGenerator(name = "publisher_sequence", sequenceName = "publisher_sequence", allocationSize = 1)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "publisher_sequence")
     private Long id;
+    @NotBlank(message = "Name cannot be empty")
     private String name;
 
     @OneToMany(mappedBy = "publisher")

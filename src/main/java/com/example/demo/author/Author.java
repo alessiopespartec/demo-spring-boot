@@ -3,6 +3,7 @@ package com.example.demo.author;
 import com.example.demo.book.Book;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -13,7 +14,9 @@ public class Author {
     @SequenceGenerator(name = "author_sequence", sequenceName = "author_sequence", allocationSize = 1)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "author_sequence")
     private Long id;
+    @NotBlank(message = "First name must not be empty")
     private String firstName;
+    @NotBlank(message = "Last name must not be empty")
     private String lastName;
 
     @ManyToMany(mappedBy = "authors")

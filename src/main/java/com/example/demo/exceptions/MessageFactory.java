@@ -10,6 +10,10 @@ public class MessageFactory {
         return Character.toUpperCase(message.charAt(0)) + message.substring(1);
     }
 
+    public static String fieldErrorMessage(String fieldName) {
+        return fieldName + " is missing or is empty or null";
+    }
+
     public static String successOperationMessage(String entityName, String operation) {
         return entityName + " " + operation + " successfully.";
     }

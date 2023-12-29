@@ -3,6 +3,7 @@ package com.example.demo.book;
 import com.example.demo.author.Author;
 import com.example.demo.publisher.Publisher;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 
 import java.time.LocalDate;
 import java.util.HashSet;
@@ -15,7 +16,7 @@ public class Book {
     @SequenceGenerator(name = "book_sequence", sequenceName = "book_sequence", allocationSize = 1)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "book_sequence")
     private Long id;
-
+    @NotBlank(message = "Title must not be empty")
     private String title;
 
     @Column(name = "year_of_publication")

@@ -1,7 +1,10 @@
 package com.example.demo.publisher;
 
+import com.example.demo.exceptions.MessageFactory;
 import com.example.demo.response.ResponseHandler;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.validation.Valid;
+import org.aspectj.bridge.Message;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,61 +25,39 @@ public class PublisherController {
 
     @GetMapping
     public ResponseEntity<Object> getAllPublishers() {
-        List<Publisher> data = publisherService.getAllPublishers();
-        if (data.isEmpty()) {
-            return ResponseHandler.generateResponse("Publishers not found", HttpStatus.NOT_FOUND);
+        List<Publisher> publishers = publisherService.getAllPublishers();
+        if (publishers.isEmpty()) {
+            throw new EntityNotFoundException("No publishers found");
         }
-        return ResponseHandler.generateResponse("Publishers request successful", HttpStatus.OK, data);
+        String successMessage = MessageFactory.successOperationMessage("Publishers", "retrieved");
+        return ResponseHandler.generateResponse(successMessage, HttpStatus.OK, publishers);
     }
 
     @GetMapping("{id}")
     public ResponseEntity<Object> getPublisher(@PathVariable Long id) {
-        try {
-            Publisher publisher = publisherService.getPublisher(id);
-            return ResponseHandler.generateResponse("Publisher request successful", HttpStatus.OK, publisher);
-        } catch (EntityNotFoundException e) {
-            return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.NOT_FOUND);
-        }
+        Publisher publisher = publisherService.getPublisher(id);
+        String successMessage = MessageFactory.successOperationMessage("Publisher", "retrieved");
+        return ResponseHandler.generateResponse(successMessage, HttpStatus.OK, publisher);
     }
 
     @PostMapping
-    public ResponseEntity<Object> addPublisher(@RequestBody Publisher publisher) {
-        try {
-            publisherService.addPublisher(publisher);
-            return ResponseHandler.generateResponse("Publisher added successfully", HttpStatus.CREATED);
-        } catch (IllegalArgumentException e) {
-            return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.BAD_REQUEST);
-        }
+    public ResponseEntity<Object> addPublisher(@Valid @RequestBody Publisher publisher) {
+        publisherService.addPublisher(publisher);
+        String successMessage = MessageFactory.successOperationMessage("Publisher", "added");
+        return ResponseHandler.generateResponse(successMessage, HttpStatus.CREATED);
     }
 
     @PutMapping("{id}")
-    public ResponseEntity<Object> updatePublisher(@RequestBody Publisher publisher, @PathVariable Long id) {
-        try {
-            publisherService.updatePublisher(publisher, id);
-            return ResponseHandler.generateResponse("Publisher updated successfully", HttpStatus.OK);
-        } catch (EntityNotFoundException e) {
-            return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.NOT_FOUND);
-        }
+    public ResponseEntity<Object> updatePublisher(@Valid @RequestBody Publisher publisher, @PathVariable Long id) {
+        publisherService.updatePublisher(publisher, id);
+        String successMessage = MessageFactory.successOperationMessage("Publisher", "updated");
+        return ResponseHandler.generateResponse(successMessage, HttpStatus.OK);
     }
 
     @DeleteMapping("{id}")
     public ResponseEntity<Object> deletePublisher(@PathVariable Long id) {
-        try {
-            publisherService.deletePublisher(id);
-            return ResponseHandler.generateResponse("Publisher deleted successfully", HttpStatus.OK);
-        } catch (EntityNotFoundException e) {
-            return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.NOT_FOUND);
-        }
-    }
-
-    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
-    public ResponseEntity<Object> handleTypeMismatch(MethodArgumentTypeMismatchException e) {
-        String error = "Invalid parameter: " + e.getName() + " should be of type " + e.getRequiredType().getSimpleName();
-        return ResponseHandler.generateResponse(error, HttpStatus.BAD_REQUEST, null);
-    }
-
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<Object> handleGenericException(Exception e) {
-        return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR, null);
+        publisherService.deletePublisher(id);
+        String successMessage = MessageFactory.successOperationMessage("Publisher", "deleted");
+        return ResponseHandler.generateResponse(successMessage, HttpStatus.OK);
     }
 }
