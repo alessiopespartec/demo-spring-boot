@@ -1,10 +1,12 @@
-package com.example.demo.book;
+package com.example.demo.service;
 
-import com.example.demo.author.Author;
-import com.example.demo.author.AuthorRepository;
+import com.example.demo.entity.Author;
+import com.example.demo.repository.AuthorRepository;
+import com.example.demo.entity.Book;
+import com.example.demo.repository.BookRepository;
 import com.example.demo.exceptions.MessageFactory;
-import com.example.demo.publisher.Publisher;
-import com.example.demo.publisher.PublisherRepository;
+import com.example.demo.entity.Publisher;
+import com.example.demo.repository.PublisherRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;

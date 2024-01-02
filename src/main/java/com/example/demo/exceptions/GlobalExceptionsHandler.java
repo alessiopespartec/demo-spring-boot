@@ -1,4 +1,4 @@
-package com.example.demo.controllers;
+package com.example.demo.exceptions;
 
 import com.example.demo.exceptions.EmptyOrNullFieldException;
 import com.example.demo.exceptions.MessageFactory;

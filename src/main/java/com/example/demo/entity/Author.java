@@ -1,6 +1,5 @@
-package com.example.demo.author;
+package com.example.demo.entity;
 
-import com.example.demo.book.Book;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;

@@ -1,7 +1,5 @@
-package com.example.demo.book;
+package com.example.demo.entity;
 
-import com.example.demo.author.Author;
-import com.example.demo.publisher.Publisher;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 
