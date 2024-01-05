@@ -6,6 +6,7 @@ import com.example.demo.response.ResponseHandler;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -42,6 +43,11 @@ public class GlobalExceptionsHandler {
                 .collect(Collectors.joining(", "));
 
         return ResponseHandler.generateResponse(errorMessage, HttpStatus.BAD_REQUEST, null);
+    }
+
+    @ExceptionHandler(UsernameNotFoundException.class)
+    public ResponseEntity<Object> handleUsernameNotFound(UsernameNotFoundException e) {
+        return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.NOT_FOUND, null);
     }
 
     @ExceptionHandler(Exception.class)
