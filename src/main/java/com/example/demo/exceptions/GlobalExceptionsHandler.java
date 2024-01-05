@@ -45,11 +45,6 @@ public class GlobalExceptionsHandler {
         return ResponseHandler.generateResponse(errorMessage, HttpStatus.BAD_REQUEST, null);
     }
 
-    @ExceptionHandler(UsernameNotFoundException.class)
-    public ResponseEntity<Object> handleUsernameNotFound(UsernameNotFoundException e) {
-        return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.NOT_FOUND, null);
-    }
-
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Object> handleGenericException(Exception e) {
         return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR, null);

@@ -1,6 +1,7 @@
 package com.example.demo.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -18,8 +19,10 @@ public class User {
     @GeneratedValue(strategy= GenerationType.IDENTITY)
     private Long id;
 
+    @NotBlank(message = "Email must not be empty")
     private String email;
 
+    @NotBlank(message = "Password name must not be empty")
     private String password;
 
     private String firstName;
@@ -31,7 +34,7 @@ public class User {
     private String country;
 
     private String occupation;
-    
+
     private LocalDate dateOfBirth;
 
     private String gender;
