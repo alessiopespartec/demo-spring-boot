@@ -3,8 +3,10 @@ package com.example.demo.service;
 import com.example.demo.exceptions.MessageFactory;
 import com.example.demo.model.User;
 import com.example.demo.repository.UserRepository;
+import jakarta.annotation.PostConstruct;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -13,6 +15,9 @@ import java.util.List;
 public class UserService {
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     public List<User> getAllUsers() {
         return userRepository.findAll();
@@ -23,6 +28,7 @@ public class UserService {
     }
 
     public void createUser(User user) {
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
         userRepository.save(user);
     }
 
@@ -30,7 +36,7 @@ public class UserService {
         User userToUpdate = findUserById(id);
 
         userToUpdate.setEmail(user.getEmail());
-        userToUpdate.setPassword(user.getPassword());
+        userToUpdate.setPassword(passwordEncoder.encode(user.getPassword()));
         userToUpdate.setFirstName(user.getFirstName());
         userToUpdate.setLastName(user.getLastName());
         userToUpdate.setProfilePhotoUrl(user.getProfilePhotoUrl());
@@ -47,8 +53,20 @@ public class UserService {
         userRepository.delete(findUserById(id));
     }
 
+    public void deleteAll() {
+        userRepository.deleteAll();
+    }
+
     private User findUserById(Long id) {
         return userRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException(MessageFactory.entityNotFoundMessage("User", id)));
+    }
+
+    @PostConstruct
+    public void createDefaultUser() {
+        if (userRepository.count() == 0) {
+            User user = new User("admin@example.com", passwordEncoder.encode("password123"));
+            userRepository.save(user);
+        }
     }
 }

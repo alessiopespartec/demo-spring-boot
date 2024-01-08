@@ -56,4 +56,11 @@ public class UserController {
         String successMessage = MessageFactory.successOperationMessage("User", "deleted");
         return ResponseHandler.generateResponse(successMessage, HttpStatus.OK);
     }
+
+    @DeleteMapping
+    public ResponseEntity<Object> deleteAllUsers() {
+        userService.deleteAll();
+        String successMessage = MessageFactory.successOperationMessage("Users", "deleted");
+        return ResponseHandler.generateResponse(successMessage, HttpStatus.OK);
+    }
 }
