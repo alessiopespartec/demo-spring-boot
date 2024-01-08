@@ -1,9 +1,8 @@
 package com.example.demo.service;
 
-import com.example.demo.exceptions.MessageFactory;
 import com.example.demo.entity.Publisher;
+import com.example.demo.exceptions.EntityNotFoundException;
 import com.example.demo.repository.PublisherRepository;
-import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -26,23 +25,25 @@ public class PublisherService {
         return findPublisherById(id);
     }
 
-    public void addPublisher(Publisher publisher) {
-        publisherRepository.save(publisher);
+    public Publisher addPublisher(Publisher publisher) {
+        return publisherRepository.save(publisher);
     }
 
-    public void updatePublisher(Publisher publisher, Long id) {
+    public Publisher updatePublisher(Publisher publisher, Long id) {
         Publisher publisherToUpdate = findPublisherById(id);
 
         publisherToUpdate.setName(publisher.getName());
-        publisherRepository.save(publisherToUpdate);
+        return publisherRepository.save(publisherToUpdate);
     }
 
-    public void deletePublisher(Long id) {
-        publisherRepository.delete(findPublisherById(id));
+    public Publisher deletePublisher(Long id) {
+        Publisher publisherToDelete = findPublisherById(id);
+        publisherRepository.delete(publisherToDelete);
+        return publisherToDelete;
     }
 
     private Publisher findPublisherById(Long id) {
         return publisherRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException(MessageFactory.entityNotFoundMessage("Publisher", id)));
+                .orElseThrow(() -> new EntityNotFoundException("Publisher", id));
     }
 }

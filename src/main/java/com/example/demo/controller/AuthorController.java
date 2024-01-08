@@ -42,22 +42,22 @@ public class AuthorController {
 
     @PostMapping
     public ResponseEntity<Object> addAuthor(@Valid @RequestBody Author author) {
-        authorService.addAuthor(author);
+        Author authorCreated = authorService.addAuthor(author);
         String successMessage = MessageFactory.successOperationMessage("Author", "added");
-        return ResponseHandler.generateResponse(successMessage, HttpStatus.CREATED);
+        return ResponseHandler.generateResponse(successMessage, HttpStatus.CREATED, authorCreated);
     }
 
     @PutMapping("{id}")
     public ResponseEntity<Object> updateAuthor(@Valid @RequestBody Author author, @PathVariable Long id) {
-        authorService.updateAuthor(author, id);
+        Author authorUpdated = authorService.updateAuthor(author, id);
         String successMessage = MessageFactory.successOperationMessage("Author", "updated");
-        return ResponseHandler.generateResponse(successMessage, HttpStatus.OK);
+        return ResponseHandler.generateResponse(successMessage, HttpStatus.OK, authorUpdated);
     }
 
     @DeleteMapping("{id}")
     public ResponseEntity<Object> deleteAuthor(@PathVariable Long id) {
-        authorService.deleteAuthor(id);
+        Author authorDeleted = authorService.deleteAuthor(id);
         String successMessage = MessageFactory.successOperationMessage("Author", "deleted");
-        return ResponseHandler.generateResponse(successMessage, HttpStatus.OK);
+        return ResponseHandler.generateResponse(successMessage, HttpStatus.OK, authorDeleted);
     }
 }

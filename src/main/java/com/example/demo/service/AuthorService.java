@@ -1,9 +1,8 @@
 package com.example.demo.service;
 
 import com.example.demo.entity.Author;
+import com.example.demo.exceptions.EntityNotFoundException;
 import com.example.demo.repository.AuthorRepository;
-import com.example.demo.exceptions.MessageFactory;
-import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -27,25 +26,27 @@ public class AuthorService {
         return findAuthorById(id);
     }
 
-    public void addAuthor(Author author) {
-        authorRepository.save(author);
+    public Author addAuthor(Author author) {
+        return authorRepository.save(author);
     }
 
-    public void updateAuthor(Author author, Long id) {
+    public Author updateAuthor(Author author, Long id) {
         Author authorToUpdate = findAuthorById(id);
 
         authorToUpdate.setFirstName(author.getFirstName());
         authorToUpdate.setLastName(author.getLastName());
 
-        authorRepository.save(authorToUpdate);
+        return authorRepository.save(authorToUpdate);
     }
 
-    public void deleteAuthor(Long id) {
-        authorRepository.delete(findAuthorById(id));
+    public Author deleteAuthor(Long id) {
+        Author authorToDelete = findAuthorById(id);
+        authorRepository.delete(authorToDelete);
+        return authorToDelete;
     }
 
     private Author findAuthorById(Long id) {
         return authorRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException(MessageFactory.entityNotFoundMessage("Author", id)));
+                .orElseThrow(() -> new EntityNotFoundException("Author", id));
     }
 }

@@ -24,6 +24,11 @@ public class GlobalExceptionsHandler {
         return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.NOT_FOUND, null);
     }
 
+    @ExceptionHandler(EmailAlreadyExistsException.class)
+    public ResponseEntity<Object> handleEmailAlreadyExistsException(EmailAlreadyExistsException e) {
+        return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.NOT_FOUND, null);
+    }
+
     @ExceptionHandler(EmptyOrNullFieldException.class)
     public ResponseEntity<Object> handleEmptyOrNullFieldException(EmptyOrNullFieldException e) {
         return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.BAD_REQUEST, null);

@@ -42,22 +42,22 @@ public class PublisherController {
 
     @PostMapping
     public ResponseEntity<Object> addPublisher(@Valid @RequestBody Publisher publisher) {
-        publisherService.addPublisher(publisher);
+        Publisher publisherCreated = publisherService.addPublisher(publisher);
         String successMessage = MessageFactory.successOperationMessage("Publisher", "added");
-        return ResponseHandler.generateResponse(successMessage, HttpStatus.CREATED);
+        return ResponseHandler.generateResponse(successMessage, HttpStatus.CREATED, publisherCreated);
     }
 
     @PutMapping("{id}")
     public ResponseEntity<Object> updatePublisher(@Valid @RequestBody Publisher publisher, @PathVariable Long id) {
-        publisherService.updatePublisher(publisher, id);
+        Publisher publisherUpdated= publisherService.updatePublisher(publisher, id);
         String successMessage = MessageFactory.successOperationMessage("Publisher", "updated");
-        return ResponseHandler.generateResponse(successMessage, HttpStatus.OK);
+        return ResponseHandler.generateResponse(successMessage, HttpStatus.OK, publisherUpdated);
     }
 
     @DeleteMapping("{id}")
     public ResponseEntity<Object> deletePublisher(@PathVariable Long id) {
-        publisherService.deletePublisher(id);
+        Publisher publisherDeleted = publisherService.deletePublisher(id);
         String successMessage = MessageFactory.successOperationMessage("Publisher", "deleted");
-        return ResponseHandler.generateResponse(successMessage, HttpStatus.OK);
+        return ResponseHandler.generateResponse(successMessage, HttpStatus.OK, publisherDeleted);
     }
 }

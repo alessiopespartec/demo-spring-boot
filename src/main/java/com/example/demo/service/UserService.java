@@ -1,10 +1,10 @@
 package com.example.demo.service;
 
-import com.example.demo.exceptions.MessageFactory;
+import com.example.demo.exceptions.EmailAlreadyExistsException;
+import com.example.demo.exceptions.EntityNotFoundException;
 import com.example.demo.model.User;
 import com.example.demo.repository.UserRepository;
 import jakarta.annotation.PostConstruct;
-import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -27,13 +27,21 @@ public class UserService {
         return findUserById(id);
     }
 
-    public void createUser(User user) {
+    public User createUser(User user) {
+        if (userRepository.findByEmail(user.getEmail()) != null) {
+            throw new EmailAlreadyExistsException(user.getEmail());
+        }
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-        userRepository.save(user);
+        return userRepository.save(user);
     }
 
-    public void updateUser(User user, Long id) {
+    public User updateUser(User user, Long id) {
         User userToUpdate = findUserById(id);
+
+        if (!user.getEmail().equals(userToUpdate.getEmail()) &&
+            userRepository.findByEmail(user.getEmail()) != null) {
+            throw new EmailAlreadyExistsException(user.getEmail());
+        }
 
         userToUpdate.setEmail(user.getEmail());
         userToUpdate.setPassword(passwordEncoder.encode(user.getPassword()));
@@ -46,11 +54,13 @@ public class UserService {
         userToUpdate.setGender(user.getGender());
         userToUpdate.setRole(user.getRole());
 
-        userRepository.save(userToUpdate);
+        return userRepository.save(userToUpdate);
     }
 
-    public void deleteUser(Long id) {
-        userRepository.delete(findUserById(id));
+    public User deleteUser(Long id) {
+        User userToDelete = findUserById(id);
+        userRepository.delete(userToDelete);
+        return userToDelete;
     }
 
     public void deleteAll() {
@@ -59,7 +69,7 @@ public class UserService {
 
     private User findUserById(Long id) {
         return userRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException(MessageFactory.entityNotFoundMessage("User", id)));
+                .orElseThrow(() -> new EntityNotFoundException("User", id));
     }
 
     @PostConstruct

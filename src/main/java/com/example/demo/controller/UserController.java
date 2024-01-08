@@ -38,23 +38,23 @@ public class UserController {
 
     @PostMapping
     public ResponseEntity<Object> addUser(@Valid @RequestBody User user) {
-        userService.createUser(user);
+        User createdUser = userService.createUser(user);
         String successMessage = MessageFactory.successOperationMessage("User", "added");
-        return ResponseHandler.generateResponse(successMessage, HttpStatus.CREATED);
+        return ResponseHandler.generateResponse(successMessage, HttpStatus.CREATED, createdUser);
     }
 
     @PutMapping("{id}")
     public ResponseEntity<Object> updateUser(@Valid @RequestBody User user, @PathVariable Long id) {
-        userService.updateUser(user, id);
+        User updatedUser = userService.updateUser(user, id);
         String successMessage = MessageFactory.successOperationMessage("User", "updated");
-        return ResponseHandler.generateResponse(successMessage, HttpStatus.OK);
+        return ResponseHandler.generateResponse(successMessage, HttpStatus.OK, updatedUser);
     }
 
     @DeleteMapping("{id}")
     public ResponseEntity<Object> deleteUser(@PathVariable Long id) {
-        userService.deleteUser(id);
+        User userDeleted = userService.deleteUser(id);
         String successMessage = MessageFactory.successOperationMessage("User", "deleted");
-        return ResponseHandler.generateResponse(successMessage, HttpStatus.OK);
+        return ResponseHandler.generateResponse(successMessage, HttpStatus.OK, userDeleted);
     }
 
     @DeleteMapping

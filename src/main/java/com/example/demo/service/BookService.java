@@ -1,13 +1,12 @@
 package com.example.demo.service;
 
 import com.example.demo.entity.Author;
-import com.example.demo.repository.AuthorRepository;
 import com.example.demo.entity.Book;
-import com.example.demo.repository.BookRepository;
-import com.example.demo.exceptions.MessageFactory;
 import com.example.demo.entity.Publisher;
+import com.example.demo.exceptions.EntityNotFoundException;
+import com.example.demo.repository.AuthorRepository;
+import com.example.demo.repository.BookRepository;
 import com.example.demo.repository.PublisherRepository;
-import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -40,18 +39,18 @@ public class BookService {
     }
 
     @Transactional
-    public void addBook(Book book) {
+    public Book addBook(Book book) {
         Publisher publisher = validateAndGetPublisher(book.getPublisher());
         book.setPublisher(publisher);
 
         Set<Author> authors = validateAndGetAuthors(book.getAuthors());
         book.setAuthors(authors);
 
-        bookRepository.save(book);
+        return bookRepository.save(book);
     }
 
     @Transactional
-    public void updateBook(Book book, Long bookId) {
+    public Book updateBook(Book book, Long bookId) {
         Publisher publisher = validateAndGetPublisher(book.getPublisher());
         Set<Author> authors = validateAndGetAuthors(book.getAuthors());
 
@@ -62,16 +61,18 @@ public class BookService {
         bookToUpdate.setPublisher(publisher);
         bookToUpdate.setAuthors(authors);
 
-        bookRepository.save(bookToUpdate);
+        return bookRepository.save(bookToUpdate);
     }
 
-    public void deleteBook(Long id) {
-        bookRepository.delete(findBookById(id));
+    public Book deleteBook(Long id) {
+        Book bookToDelete = findBookById(id);
+        bookRepository.delete(bookToDelete);
+        return bookToDelete;
     }
 
     private Book findBookById(Long id) {
         return bookRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException(MessageFactory.entityNotFoundMessage("Book", id)));
+                .orElseThrow(() -> new EntityNotFoundException("Book", id));
     }
 
     private Publisher validateAndGetPublisher(Publisher publisher) {
@@ -80,7 +81,7 @@ public class BookService {
         }
 
         return publisherRepository.findById(publisher.getId())
-                .orElseThrow(() -> new EntityNotFoundException(MessageFactory.entityNotFoundMessage("Publisher", publisher.getId())));
+                .orElseThrow(() -> new EntityNotFoundException("Publisher", publisher.getId()));
     }
 
     private Set<Author> validateAndGetAuthors(Set<Author> authors) {
@@ -94,7 +95,7 @@ public class BookService {
                 throw new IllegalArgumentException("Each author must have an ID");
             }
             Author dbAuthor = authorRepository.findById(author.getId())
-                    .orElseThrow(() -> new EntityNotFoundException(MessageFactory.entityNotFoundMessage("Author", author.getId())));
+                    .orElseThrow(() -> new EntityNotFoundException("Author", author.getId()));
             validatedAuthors.add(dbAuthor);
         }
         return validatedAuthors;

@@ -43,22 +43,22 @@ public class BookController {
 
     @PostMapping
     public ResponseEntity<Object> addBook(@Valid @RequestBody Book book) {
-        bookService.addBook(book);
+        Book bookCreated = bookService.addBook(book);
         String successMessage = MessageFactory.successOperationMessage("Book", "added");
-        return ResponseHandler.generateResponse(successMessage, HttpStatus.CREATED);
+        return ResponseHandler.generateResponse(successMessage, HttpStatus.CREATED, bookCreated);
     }
 
     @PutMapping("{id}")
     public ResponseEntity<Object> updateBook(@Valid @RequestBody Book book, @PathVariable Long id) {
-        bookService.updateBook(book, id);
+        Book bookUpdated = bookService.updateBook(book, id);
         String successMessage = MessageFactory.successOperationMessage("Book", "updated");
-        return ResponseHandler.generateResponse(successMessage, HttpStatus.OK);
+        return ResponseHandler.generateResponse(successMessage, HttpStatus.OK, bookUpdated);
     }
 
     @DeleteMapping("{id}")
     public ResponseEntity<Object> deleteBook(@PathVariable Long id){
-        bookService.deleteBook(id);
+        Book bookDeleted = bookService.deleteBook(id);
         String successMessage = MessageFactory.successOperationMessage("Book", "deleted");
-        return ResponseHandler.generateResponse(successMessage, HttpStatus.OK);
+        return ResponseHandler.generateResponse(successMessage, HttpStatus.OK, bookDeleted);
     }
 }
