@@ -1,5 +1,6 @@
 package com.example.demo.entity;
 
+import com.fasterxml.jackson.annotation.*;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 
@@ -26,10 +27,12 @@ public class Book {
         joinColumns = @JoinColumn(name = "book_id"),
         inverseJoinColumns = @JoinColumn(name = "author_id")
     )
+    @JsonIgnoreProperties("books")
     private Set<Author> authors = new HashSet<>();
 
     @ManyToOne
     @JoinColumn(name = "publisher_id")
+    @JsonIgnoreProperties("books")
     private Publisher publisher;
 
     public Book() {

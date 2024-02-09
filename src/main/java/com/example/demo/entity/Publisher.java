@@ -1,6 +1,9 @@
 package com.example.demo.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 
@@ -17,7 +20,7 @@ public class Publisher {
     private String name;
 
     @OneToMany(mappedBy = "publisher")
-    @JsonIgnore
+    @JsonIgnoreProperties("publisher")
     private Set<Book> books = new HashSet<>();
 
     public Publisher() {

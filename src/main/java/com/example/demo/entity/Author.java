@@ -1,6 +1,6 @@
 package com.example.demo.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.*;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 
@@ -19,7 +19,7 @@ public class Author {
     private String lastName;
 
     @ManyToMany(mappedBy = "authors")
-    @JsonIgnore
+    @JsonIgnoreProperties("authors")
     private Set<Book> books = new HashSet<>();
 
     public Author() {
